@@ -1,0 +1,35 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "./generated/prisma"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String?
+  createdAt DateTime @default(now())
+  files     File[]
+}
+
+model File {
+  id               String   @id @default(uuid())
+  userId           String
+  originalFilename String
+  storedFilename   String
+  mimeType         String
+  fileSize         Int
+  fileUrl          String
+  s3Bucket         String
+  s3Key            String
+  passwordHash     String
+  expiresAt        DateTime
+  createdAt        DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
